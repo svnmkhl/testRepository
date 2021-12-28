@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.RecursiveAction;
@@ -22,6 +23,7 @@ public class PageContentScanner extends RecursiveAction {
     private Document document;
     private List<String> tags;
     private List<String>pageText = new ArrayList<>();
+    private HashSet<String> uniqueWordsFromPageText;
 
     public PageContentScanner(String url, List<String> tags) throws IOException {
         parentURL = url;
@@ -36,10 +38,11 @@ public class PageContentScanner extends RecursiveAction {
         childAbsoluteURLs = document.select("a[href*= " + parentURL + "]").select("a[href$=/]"); //Получаем дочерние абсолютные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         childRelativeURLs = document.select("a[href^=/]").select("a[href$=/]"); //Получаем дочерние относительные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         for(String tag : tags) {
-            pageText.addAll(Arrays.asList(document.select(tag).text().toLowerCase().replaceAll("\\pP", "").split(" ")));
+           pageText.addAll(Arrays.asList(document.select(tag).text().toLowerCase().replaceAll("\\pP", "").split(" ")));
         }
+        uniqueWordsFromPageText = new HashSet<>(pageText);
         try {
-            new Lemmatizator().collectLemmsAndCounts(pageText);
+            new Lemmatizator().collectLemmsAndCounts(uniqueWordsFromPageText);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,11 +4,7 @@ import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.WrongCharaterException;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Lemmatizator {
     private static LuceneMorphology luceneMorph;
@@ -37,15 +33,15 @@ public class Lemmatizator {
         return wordBaseForms;
     }
 
-    public void collectLemmsAndCounts (List<String> pageText) {
-
+    public void collectLemmsAndCounts (HashSet<String> uniqueWordsFromPageText) {
+        List<String> uniqueWordsFromPageTextList = new ArrayList<>(uniqueWordsFromPageText);
         int count = 1;
-        for (int i = 0; i < pageText.size(); i ++) {
+        for (int i = 0; i < uniqueWordsFromPageTextList.size(); i ++) {
             try {
-                if (pageText.get(i).equals("")) {
+                if (uniqueWordsFromPageTextList.get(i).equals("")) {
                     continue;
                 }
-                List<String> lemms = getLemms(pageText.get(i).trim().toLowerCase().replaceAll("\\pP", ""));
+                List<String> lemms = getLemms(uniqueWordsFromPageTextList.get(i).trim().toLowerCase().replaceAll("\\pP", ""));
                 synchronized (lemmsAndCounts)
                 {
                     lemms.forEach(lemma -> {
@@ -57,7 +53,7 @@ public class Lemmatizator {
                         }
                     });
                 }
-            }catch (WrongCharaterException | IOException ex) {
+            } catch (WrongCharaterException | IOException ex) {
                 continue;
             }
         }

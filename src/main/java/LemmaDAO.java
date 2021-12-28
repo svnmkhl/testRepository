@@ -44,6 +44,7 @@ public class LemmaDAO {
         session.close();
     }
 
+
    /* public Auto findAutoById(int id) {
         return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Auto.class, id);
     }

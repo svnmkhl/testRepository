@@ -19,6 +19,7 @@ public class HibernateSessionFactoryCreator {
         }
         return sessionFactory;
     }
+
     public static void shutdownSessionFactory() {
         // Close caches and connection pools
         getSessionFactory().close();

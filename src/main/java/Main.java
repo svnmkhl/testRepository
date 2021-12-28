@@ -15,16 +15,12 @@ public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
         HashMap<String, Integer> lemmsAndCounts;
         final File inputFile = new File("src\\main\\resources\\sites.txt");
-        final File outputFile = new File("src\\main\\resources\\lemmasFile.txt");
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        FileWriter fw = new FileWriter(outputFile.getAbsoluteFile(), true);
-        BufferedWriter bw =new BufferedWriter(fw);
         FileReader fr = new FileReader(inputFile);
         BufferedReader reader = new BufferedReader(fr);
         List<Lemma> lemmsList = new ArrayList<>();
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         List<String> tags = session.createSQLQuery("SELECT name FROM field").list();
-
         try {
             String line = reader.readLine();
             while (line != null) {
