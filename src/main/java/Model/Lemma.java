@@ -9,16 +9,25 @@ public class Lemma {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String name;
+    private String lemma;
 
     private int frequency;
 
+    public Lemma () {
+
+    }
+
+    public Lemma (String name, Integer frequency) {
+        this.lemma = name;
+        this.frequency = frequency;
+    }
+
     public String getName() {
-        return name;
+        return lemma;
     }
 
     public void setName(String lemma) {
-        this.name = lemma;
+        this.lemma = lemma;
     }
 
     public int getFrequency() {

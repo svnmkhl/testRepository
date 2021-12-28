@@ -19,6 +19,6 @@
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">validate</property>
 
-        <mapping class="Lemma"></mapping>
+        <mapping class="Model.Lemma"></mapping>
     </session-factory>
 </hibernate-configuration>

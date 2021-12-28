@@ -1,18 +1,17 @@
-package Model;
-
+import Model.Lemma;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import java.util.List;
+
 
 public class LemmaDAO {
 
     public Lemma findById(int id) {
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Lemma.class, id);
+        return HibernateSessionFactoryCreator.getSessionFactory().openSession().get(Lemma.class, id);
     }
 
     public void save(Lemma lemma) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.save(lemma);
         tx1.commit();
@@ -20,7 +19,7 @@ public class LemmaDAO {
     }
 
     public void update(Lemma lemma) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.update(lemma);
         tx1.commit();
@@ -28,7 +27,7 @@ public class LemmaDAO {
     }
 
     public void saveMany(List<Lemma> lemmaList){
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         for(Lemma lemma : lemmaList) {
             session.save(lemma);
@@ -38,7 +37,7 @@ public class LemmaDAO {
     }
 
     public void delete(Lemma lemma) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.delete(lemma);
         tx1.commit();
