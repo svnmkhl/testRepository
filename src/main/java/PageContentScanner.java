@@ -1,4 +1,6 @@
 import Lemmatizator.Lemmatizator;
+import Model.Page;
+import Model.PageDAO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,14 +24,15 @@ public class PageContentScanner extends RecursiveAction {
     private List<PageContentScanner> taskList = new ArrayList<>();
     private Document document;
     private List<String> tags;
-    private List<String>pageText = new ArrayList<>();
-    private HashSet<String> uniqueWordsFromPageText;
+    private static List<Page>pages = new ArrayList<>();
+    private Page page;
+    private StringBuilder content = new StringBuilder();
 
     public PageContentScanner(String url, List<String> tags) throws IOException {
         parentURL = url;
         this.tags = tags;
         document = Jsoup.connect(parentURL).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-                .maxBodySize(0).referrer("http://www.google.com").ignoreHttpErrors(true).get(); //Подключаемся к корневой странице и получаем тело данной страницы
+                .maxBodySize(0).referrer("http://www.google.com").get(); //Подключаемся к корневой странице и получаем тело данной страницы
     }
     @Override
     protected void compute() {
@@ -38,11 +41,11 @@ public class PageContentScanner extends RecursiveAction {
         childAbsoluteURLs = document.select("a[href*= " + parentURL + "]").select("a[href$=/]"); //Получаем дочерние абсолютные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         childRelativeURLs = document.select("a[href^=/]").select("a[href$=/]"); //Получаем дочерние относительные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         for(String tag : tags) {
-           pageText.addAll(Arrays.asList(document.select(tag).text().toLowerCase().replaceAll("\\pP", "").split(" ")));
+            content.append((document.select(tag).text()));
         }
-        uniqueWordsFromPageText = new HashSet<>(pageText);
+        page = new Page(parentURL, document.connection().response().statusCode(), content.toString());
         try {
-            new Lemmatizator().collectLemmsAndCounts(uniqueWordsFromPageText);
+            new Lemmatizator().collectLemmsAndCounts(page);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,7 +66,10 @@ public class PageContentScanner extends RecursiveAction {
                     pageContentScanner.fork();
                     taskList.add(pageContentScanner);
                 } catch (IOException e) {
+                    PageDAO pageDAO = new PageDAO();
+                    pageDAO.save(page);
                     e.printStackTrace();
+                    continue;
                 }
             }
             for (PageContentScanner pageContentScanner : taskList) {

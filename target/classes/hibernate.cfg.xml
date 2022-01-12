@@ -20,5 +20,6 @@
         <property name="hbm2ddl.auto">validate</property>
 
         <mapping class="Model.Lemma"></mapping>
+        <mapping class="Model.Page"></mapping>
     </session-factory>
 </hibernate-configuration>
