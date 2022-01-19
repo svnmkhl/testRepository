@@ -4,6 +4,7 @@ import Model.HibernateSessionFactoryCreator;
 import Model.Lemma;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.util.HashSet;
 import java.util.List;
@@ -11,11 +12,25 @@ import java.util.List;
 
 public class LemmaDAO {
 
-    public Lemma findById(int id) {
-        return HibernateSessionFactoryCreator.getSessionFactory().openSession().get(Lemma.class, id);
+    public synchronized static Lemma findById(int id) {
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Lemma lemma = session.get(Lemma.class, id);
+        tx1.commit();
+        session.close();
+        return lemma;
     }
 
-    public void save(Lemma lemma) {
+    public synchronized static List<Lemma> findByName(String name) {
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        List<Lemma> lemma = session.createSQLQuery("SELECT * FROM lemma WHERE lemma.lemma = \\'" + name + "\\'").getResultList();
+        tx1.commit();
+        session.close();
+        return lemma;
+    }
+
+    public synchronized static void save(Lemma lemma) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.save(lemma);
@@ -23,15 +38,18 @@ public class LemmaDAO {
         session.close();
     }
 
-    public void update(Lemma lemma) {
+    public synchronized static void update(Lemma lemma) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
-        session.update(lemma);
+        Query query = session.createQuery("update Lemma set frequency = frequency + :newFrequency where lemma = :name");
+        query.setParameter("newFrequency", lemma.getFrequency());
+        query.setParameter("name", lemma.getName() + "");
+        int result = query.executeUpdate();
         tx1.commit();
         session.close();
     }
 
-    public void saveMany(HashSet<Lemma> lemmaSet){
+    public synchronized static void saveMany(HashSet<Lemma> lemmaSet){
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         for(Lemma lemma : lemmaSet) {
@@ -41,7 +59,7 @@ public class LemmaDAO {
         session.close();
     }
 
-    public void delete(Lemma lemma) {
+    public synchronized static void delete(Lemma lemma) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.delete(lemma);

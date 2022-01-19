@@ -1,16 +1,16 @@
 import Lemmatizator.Lemmatizator;
-import Model.Page;
-import Model.PageDAO;
+import Model.*;
+import org.hibernate.Session;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.net.ConnectException;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.RecursiveAction;
 
@@ -26,9 +26,10 @@ public class PageContentScanner extends RecursiveAction {
     private List<String> tags;
     private static List<Page>pages = new ArrayList<>();
     private Page page;
+    private static int pageId;
     private StringBuilder content = new StringBuilder();
 
-    public PageContentScanner(String url, List<String> tags) throws IOException {
+    public PageContentScanner(String url) throws IOException {
         parentURL = url;
         this.tags = tags;
         document = Jsoup.connect(parentURL).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
@@ -37,18 +38,44 @@ public class PageContentScanner extends RecursiveAction {
     @Override
     protected void compute() {
         System.out.println("I am working in thread " + Thread.currentThread().getName() +  "\n Ссылка: "+ parentURL);
+        HashMap<String, Integer> lemmsAndCounts = new HashMap<>();
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
+        List<String> tags = session.createSQLQuery("SELECT selector FROM field").list();
+        session.close();
+        final double titleWeightCoeff = 1.0;
+        final double bodyWeightCoeff = 0.8;
         urls.add(parentURL);
+        for (String tag : tags) {
+            String contentByTag = document.select(tag).text();
+            try {
+                Lemmatizator lemmatizator = new Lemmatizator(contentByTag);
+                lemmatizator.collectLemmsAndCounts();
+                lemmsAndCounts = lemmatizator.getLemmsAndCounts();
+                for (Map.Entry<String, Integer> entry : lemmsAndCounts.entrySet()) {
+                    try {
+                       /* Lemma lemma = LemmaDAO.findByName(entry.getKey());
+                        lemma.setFrequency(lemma.getFrequency() + entry.getValue());*/
+                       if(LemmaDAO.findByName(entry.getKey()).size() == 0) {
+                           LemmaDAO.save(new Lemma(entry.getKey(), entry.getValue()));
+                       } else {
+                           LemmaDAO.update(new Lemma(entry.getKey(), entry.getValue()));
+                       }
+                    } catch (Exception e) {
+                        LemmaDAO.save(new Lemma(entry.getKey(), entry.getValue()));
+                        continue;
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            content.append(contentByTag + " ");
+        }
         childAbsoluteURLs = document.select("a[href*= " + parentURL + "]").select("a[href$=/]"); //Получаем дочерние абсолютные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         childRelativeURLs = document.select("a[href^=/]").select("a[href$=/]"); //Получаем дочерние относительные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
-        for(String tag : tags) {
-            content.append((document.select(tag).text()));
-        }
         page = new Page(parentURL, document.connection().response().statusCode(), content.toString());
-        try {
-            new Lemmatizator().collectLemmsAndCounts(page);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        PageDAO.save(page);
+
         if (childAbsoluteURLs != null) {
             allChildURLs.addAll(childAbsoluteURLs);
         }
@@ -62,13 +89,14 @@ public class PageContentScanner extends RecursiveAction {
                 }
                 urls.add(childURL.absUrl("href"));
                 try {
-                    PageContentScanner pageContentScanner = new PageContentScanner(childURL.absUrl("href"), tags);
+                    PageContentScanner pageContentScanner = new PageContentScanner(childURL.absUrl("href"));
                     pageContentScanner.fork();
                     taskList.add(pageContentScanner);
-                } catch (IOException e) {
-                    PageDAO pageDAO = new PageDAO();
-                    pageDAO.save(page);
+                } catch (HttpStatusException e) {
+                    PageDAO.save(new Page(parentURL, e.getStatusCode(), ""));
                     e.printStackTrace();
+                    continue;
+                } catch (IOException e) {
                     continue;
                 }
             }

@@ -15,13 +15,11 @@ public class Main {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
         FileReader fr = new FileReader(inputFile);
         BufferedReader reader = new BufferedReader(fr);
-        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
-        List<String> tags = session.createSQLQuery("SELECT name FROM field").list();
         try {
             String line = reader.readLine();
             while (line != null) {
                 try {
-                    forkJoinPool.invoke(new PageContentScanner(line, tags));
+                    forkJoinPool.invoke(new PageContentScanner(line));
                     line = reader.readLine();
                 }catch (SSLHandshakeException e) {
                     continue;
@@ -32,10 +30,8 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        lemmsAndCounts = Lemmatizator.getLemmsAndCounts();
-        LemmaDAO lemmaDAO = new LemmaDAO();
-        lemmaDAO.saveMany(lemmsAndCounts);
-        session.close();
+        //lemmsAndCounts = Lemmatizator.getLemmsAndCounts();
+        //LemmaDAO.saveMany(lemmsAndCounts);
     }
 }
 

@@ -16,7 +16,7 @@ public class LemmatizatorTest {
        //List<String> wordsList = Arrays.asList(text.split(" "));
        List <String> wordsList = Arrays.asList(Arrays.stream(text.split(" ")).map(string ->
                string.toLowerCase().replaceAll("\\pP", "")).toArray(String[]::new));
-       wordsList.forEach(word -> {
+       /*wordsList.forEach(word -> {
            try {
                Lemmatizator.getLemms(word.trim().toLowerCase().replaceAll("\\pP", ""));
                Lemmatizator.partOfLang(word.trim().toLowerCase().replaceAll("\\pP", ""));
@@ -25,6 +25,6 @@ public class LemmatizatorTest {
                e.printStackTrace();
            }
        });
-       //Lemmatizator.getLemmsAndCounts(wordsList);
+       //Lemmatizator.getLemmsAndCounts(wordsList);*/
     }
 }
