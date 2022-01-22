@@ -40,11 +40,13 @@ public class PageContentScanner extends RecursiveAction {
         System.out.println("I am working in thread " + Thread.currentThread().getName() +  "\n Ссылка: "+ parentURL);
         HashMap<String, Integer> lemmsAndCounts = new HashMap<>();
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
-        List<String> tags = session.createSQLQuery("SELECT selector FROM field").list();
+        List<String> tags = session.createSQLQuery("SELECT selector FROM _field").list();
         session.close();
         final double titleWeightCoeff = 1.0;
         final double bodyWeightCoeff = 0.8;
         urls.add(parentURL);
+        page = new Page(parentURL, document.connection().response().statusCode(), content.toString());
+        PageDAO.save(page);
         for (String tag : tags) {
             String contentByTag = document.select(tag).text();
             try {
@@ -53,15 +55,20 @@ public class PageContentScanner extends RecursiveAction {
                 lemmsAndCounts = lemmatizator.getLemmsAndCounts();
                 for (Map.Entry<String, Integer> entry : lemmsAndCounts.entrySet()) {
                     try {
-                       /* Lemma lemma = LemmaDAO.findByName(entry.getKey());
-                        lemma.setFrequency(lemma.getFrequency() + entry.getValue());*/
                        if(LemmaDAO.findByName(entry.getKey()).size() == 0) {
-                           LemmaDAO.save(new Lemma(entry.getKey(), entry.getValue()));
+                           Lemma lemma = new Lemma(entry.getKey(), entry.getValue());
+                           LemmaDAO.save(lemma);
+                           IndexDAO.save(new Index(page.getId(), lemma.getId(), 1.0f));
+
                        } else {
-                           LemmaDAO.update(new Lemma(entry.getKey(), entry.getValue()));
+                           Lemma lemma = new Lemma(entry.getKey(), entry.getValue());
+                           LemmaDAO.update(lemma);
+                           IndexDAO.save(new Index(page.getId(), lemma.getId(), 1.0f));
                        }
                     } catch (Exception e) {
-                        LemmaDAO.save(new Lemma(entry.getKey(), entry.getValue()));
+                        Lemma lemma = new Lemma(entry.getKey(), entry.getValue());
+                        LemmaDAO.save(lemma);
+                        IndexDAO.save(new Index(page.getId(), lemma.getId(), 1.0f));
                         continue;
                     }
                 }
@@ -73,8 +80,6 @@ public class PageContentScanner extends RecursiveAction {
         }
         childAbsoluteURLs = document.select("a[href*= " + parentURL + "]").select("a[href$=/]"); //Получаем дочерние абсолютные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         childRelativeURLs = document.select("a[href^=/]").select("a[href$=/]"); //Получаем дочерние относительные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
-        page = new Page(parentURL, document.connection().response().statusCode(), content.toString());
-        PageDAO.save(page);
 
         if (childAbsoluteURLs != null) {
             allChildURLs.addAll(childAbsoluteURLs);

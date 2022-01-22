@@ -28,6 +28,10 @@ public class Page {
         this.code = code;
         this.content = content;
     }
+    public int getId() {
+        return id;
+    }
+
     public String getPath() {
         return path;
     }

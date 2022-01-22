@@ -1,48 +1,47 @@
 package Model;
 
-import Model.Page;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.List;
 
-
-public class PageDAO
+public class IndexDAO
 {
-
-    public static synchronized Page findById(int id) {
-        return HibernateSessionFactoryCreator.getSessionFactory().openSession().get(Page.class, id);
+    public static synchronized Index findById(int id) {
+        return HibernateSessionFactoryCreator.getSessionFactory().openSession().get(Index.class, id);
     }
 
-    public static synchronized void save(Page page) {
+    public static synchronized void save(Index index) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
-        session.save(page);
+        session.save(index);
         tx1.commit();
         session.close();
     }
 
-    public static synchronized void update(Page page) {
+    public static synchronized void update(Index index) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
-        session.update(page);
+        session.update(index);
         tx1.commit();
         session.close();
     }
 
-    public static synchronized void saveMany(List<Page> pageList) {
+    public static synchronized void saveMany(List<Index> indexList) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
-        for (Page page : pageList) {
-            session.save(page);
+        for (Index index : indexList) {
+            session.save(index);
         }
         tx1.commit();
         session.close();
     }
 
-    public static synchronized void delete(Page page) {
+    public static synchronized void delete(Index index) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
-        session.delete(page);
+        session.delete(index);
         tx1.commit();
         session.close();
     }
