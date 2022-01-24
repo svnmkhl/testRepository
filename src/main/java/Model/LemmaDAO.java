@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -22,12 +23,23 @@ public class LemmaDAO {
     }
 
     public synchronized static List<Lemma> findByName(String name) {
+        //Lemma lemma = new Lemma();
+        List<Lemma> lemmsList = new ArrayList<>();
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
-        List<Lemma> lemma = session.createSQLQuery("SELECT * FROM lemma WHERE lemma.lemma = \\'" + name + "\\'").getResultList();
+        try {
+            //lemma = (Lemma) session.createSQLQuery("SELECT * FROM lemma WHERE lemma.lemma = \\'" + name + "\\'");
+            Query query = session.createQuery("FROM Lemma WHERE lemma = :name");
+            query.setParameter("name", name);
+            lemmsList = query.getResultList();
+        } catch (Exception e) {
+            tx1.commit();
+            session.close();
+            return null;
+        }
         tx1.commit();
         session.close();
-        return lemma;
+        return lemmsList;
     }
 
     public synchronized static void save(Lemma lemma) {
@@ -40,11 +52,17 @@ public class LemmaDAO {
 
     public synchronized static void update(Lemma lemma) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
+        List<Lemma> lemmaList = new ArrayList<>();
         Transaction tx1 = session.beginTransaction();
-        Query query = session.createQuery("update Lemma set frequency = frequency + :newFrequency where lemma = :name");
+        /*Query query = session.createQuery("update Lemma set frequency = frequency + :newFrequency where lemma = :name");
         query.setParameter("newFrequency", lemma.getFrequency());
         query.setParameter("name", lemma.getName() + "");
-        int result = query.executeUpdate();
+        query.executeUpdate();*/
+        lemmaList = findByName(lemma.getName());
+        Lemma newLemma = session.get(Lemma.class, lemmaList.get(0).getId());
+        session.evict(newLemma);
+        newLemma.setFrequency(newLemma.getFrequency() + lemma.getFrequency());
+        session.update(newLemma);
         tx1.commit();
         session.close();
     }

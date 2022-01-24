@@ -44,6 +44,7 @@ public class PageContentScanner extends RecursiveAction {
         session.close();
         final double titleWeightCoeff = 1.0;
         final double bodyWeightCoeff = 0.8;
+        content.append(document.select("title").text() + " ").append(document.select("body").text());
         urls.add(parentURL);
         page = new Page(parentURL, document.connection().response().statusCode(), content.toString());
         PageDAO.save(page);
@@ -55,7 +56,7 @@ public class PageContentScanner extends RecursiveAction {
                 lemmsAndCounts = lemmatizator.getLemmsAndCounts();
                 for (Map.Entry<String, Integer> entry : lemmsAndCounts.entrySet()) {
                     try {
-                       if(LemmaDAO.findByName(entry.getKey()).size() == 0) {
+                       if(LemmaDAO.findByName(entry.getKey()).size() == 0 || LemmaDAO.findByName(entry.getKey()) == null) {
                            Lemma lemma = new Lemma(entry.getKey(), entry.getValue());
                            LemmaDAO.save(lemma);
                            IndexDAO.save(new Index(page.getId(), lemma.getId(), 1.0f));
@@ -76,7 +77,6 @@ public class PageContentScanner extends RecursiveAction {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            content.append(contentByTag + " ");
         }
         childAbsoluteURLs = document.select("a[href*= " + parentURL + "]").select("a[href$=/]"); //Получаем дочерние абсолютные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         childRelativeURLs = document.select("a[href^=/]").select("a[href$=/]"); //Получаем дочерние относительные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
