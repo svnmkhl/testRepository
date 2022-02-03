@@ -1,4 +1,4 @@
-package Model;
+package Entity;
 
 import javax.persistence.*;
 
@@ -28,4 +28,35 @@ public class Index {
         this.rank = rank;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getPageId() {
+        return pageId;
+    }
+
+    public int getLemmaId() {
+        return lemmaId;
+    }
+
+    public float getRank() {
+        return rank;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPageId(int pageId) {
+        this.pageId = pageId;
+    }
+
+    public void setLemmaId(int lemmaId) {
+        this.lemmaId = lemmaId;
+    }
+
+    public void setRank(float rank) {
+        this.rank = rank;
+    }
 }

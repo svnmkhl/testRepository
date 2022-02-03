@@ -1,12 +1,10 @@
-package Model;
+package DAO;
 
-import Model.HibernateSessionFactoryCreator;
-import Model.Lemma;
+import Entity.Lemma;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -23,8 +21,7 @@ public class LemmaDAO {
     }
 
     public synchronized static List<Lemma> findByName(String name) {
-        //Lemma lemma = new Lemma();
-        List<Lemma> lemmsList = new ArrayList<>();
+        List<Lemma> lemmsList;
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         try {
@@ -50,21 +47,16 @@ public class LemmaDAO {
         session.close();
     }
 
-    public synchronized static void update(Lemma lemma) {
+    public synchronized static Lemma updateFrequency(Lemma lemma) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
-        List<Lemma> lemmaList = new ArrayList<>();
         Transaction tx1 = session.beginTransaction();
-        /*Query query = session.createQuery("update Lemma set frequency = frequency + :newFrequency where lemma = :name");
-        query.setParameter("newFrequency", lemma.getFrequency());
-        query.setParameter("name", lemma.getName() + "");
-        query.executeUpdate();*/
-        lemmaList = findByName(lemma.getName());
+        List<Lemma> lemmaList = findByName(lemma.getName());
         Lemma newLemma = session.get(Lemma.class, lemmaList.get(0).getId());
-        session.evict(newLemma);
         newLemma.setFrequency(newLemma.getFrequency() + lemma.getFrequency());
         session.update(newLemma);
         tx1.commit();
         session.close();
+        return newLemma;
     }
 
     public synchronized static void saveMany(HashSet<Lemma> lemmaSet){

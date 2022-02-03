@@ -1,8 +1,5 @@
 package Lemmatizator;
 
-import Model.Lemma;
-import Model.Page;
-import Model.PageDAO;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.WrongCharaterException;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;

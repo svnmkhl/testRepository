@@ -1,7 +1,6 @@
-package Model;
+package DAO;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "page")

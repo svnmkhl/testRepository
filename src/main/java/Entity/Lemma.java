@@ -1,4 +1,4 @@
-package Model;
+package Entity;
 
 import javax.persistence.*;
 
@@ -41,5 +41,7 @@ public class Lemma {
     public void setFrequency(int frequency) {
         this.frequency = frequency;
     }
+
+    public void setId(int id) {this.id = id;}
 
 }

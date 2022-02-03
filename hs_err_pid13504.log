@@ -108,7 +108,7 @@ VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
 GC Precious Log:
  CPUs: 4 total, 4 available
  Memory: 8108M
- Large Model.Page Support: Disabled
+ Large DAO.Page Support: Disabled
  NUMA Support: Disabled
  Compressed Oops: Disabled
  Heap Region Size: 32M
@@ -1120,7 +1120,7 @@ Environment Variables:
 PATH=C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\iCLS\;C:\Program Files\Intel\Intel(R) Management Engine Components\iCLS\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\Git\cmd;C:\Program Files\MySQL\MySQL Server 8.0\bin\;;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\ProgramData\chocolatey\bin;;C:\Program Files (x86)\Brackets\command;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Mmikhail Savin\AppData\Local\Microsoft\WindowsApps;C:\Users\Mmikhail Savin\AppData\Local\GitHubDesktop\bin;
 USERNAME=Mmikhail Savin
 OS=Windows_NT
-PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 142 Stepping 9, GenuineIntel
+PROCESSOR_IDENTIFIER=Intel64 Family 6 DAO 142 Stepping 9, GenuineIntel
 
 
 
