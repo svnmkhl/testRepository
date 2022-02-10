@@ -108,7 +108,7 @@ VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
 GC Precious Log:
  CPUs: 4 total, 4 available
  Memory: 8108M
- Large DAO.Page Support: Disabled
+ Large Entity.Page Support: Disabled
  NUMA Support: Disabled
  Compressed Oops: Disabled
  Heap Region Size: 32M

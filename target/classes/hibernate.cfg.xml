@@ -17,10 +17,10 @@
         <!-- Set the current session context -->
         <property name="current_session_context_class">thread</property>
         <!-- Drop and re-create the database schema on startup -->
-        <property name="hbm2ddl.auto">create-drop</property>
+        <property name="hbm2ddl.auto">validate</property>
 
         <mapping class="Entity.Lemma"></mapping>
-        <mapping class="DAO.Page"></mapping>
+        <mapping class="Entity.Page"></mapping>
         <mapping class="Entity.Index"></mapping>
         <mapping class="Entity.Field"></mapping>
     </session-factory>

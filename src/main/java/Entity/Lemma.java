@@ -1,6 +1,7 @@
 package Entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table (name = "lemma")
@@ -13,6 +14,11 @@ public class Lemma {
 
     private int frequency;
 
+    @ManyToMany (cascade = CascadeType.ALL)
+    @JoinTable (name = "_index", joinColumns = {@JoinColumn (name = "lemma_id")}, inverseJoinColumns =
+            {@JoinColumn (name = "page_id")})
+    private List<Page> pages;
+
     public Lemma () {
 
     }
@@ -20,6 +26,10 @@ public class Lemma {
     public Lemma (String name, Integer frequency) {
         this.lemma = name;
         this.frequency = frequency;
+    }
+
+    public List<Page> getPages() {
+        return pages;
     }
 
     public int getId() {

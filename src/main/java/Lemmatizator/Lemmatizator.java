@@ -32,16 +32,16 @@ public class Lemmatizator {
         return wordBaseForms;
     }
 
-    public List<String> partOfLang() throws IOException {
+    public List<String> partOfLang(String text) throws IOException {
         List<String> wordBaseForms =
-                luceneMorph.getMorphInfo(textToLemms);
+                luceneMorph.getMorphInfo(text);
         return wordBaseForms;
     }
 
     public void collectLemmsAndCounts () {
         HashSet<String> setOfUniqueWordsFromPageText = new HashSet<>(Arrays.asList(textToLemms.toLowerCase().replaceAll("\\pP", " ").split(" ")));
         List<String> listOfUniqueWordsFromPageText = new ArrayList<>(setOfUniqueWordsFromPageText);
-        final int DEFAULT_LEMMA_FREQUENCY = 1;
+        final int DEFAULT_LEMMA_FREQUENCY_ON_THIS_PAGE = 1;
         for (int i = 0; i < listOfUniqueWordsFromPageText.size(); i ++) {
             try {
                 if (listOfUniqueWordsFromPageText.get(i).equals("") || listOfUniqueWordsFromPageText.get(i).equals(" ")) {
@@ -51,7 +51,7 @@ public class Lemmatizator {
                 List<String> lemms = getLemms(listOfUniqueWordsFromPageText.get(i).trim());
                 lemms.forEach(lemma -> {
                     if (!lemmsAndCounts.keySet().contains(lemma)) {
-                        lemmsAndCounts.put(lemma, DEFAULT_LEMMA_FREQUENCY);
+                        lemmsAndCounts.put(lemma, DEFAULT_LEMMA_FREQUENCY_ON_THIS_PAGE);
                     } else {
                         int newCount = lemmsAndCounts.get(lemma) + 1;
                         lemmsAndCounts.put(lemma, newCount);

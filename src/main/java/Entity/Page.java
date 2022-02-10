@@ -1,4 +1,4 @@
-package DAO;
+package Entity;
 
 import javax.persistence.*;
 
