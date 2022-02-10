@@ -13,17 +13,29 @@ public class Searching
     {
     }
 
-    public static String search (String userRequest) throws IOException {
-        HashSet<String> lemmsInSearchingQuery = new HashSet<>();
+    public static HashSet<String> search (String userRequest) throws IOException {
         Lemmatizator lemmatizator = new Lemmatizator();
-        String[] query = userRequest.trim().split(" ");
-        for (String string : query) {
-            //lemmsInSearchingQuery.addAll(lemmatizator.getLemms(string));
-            
-        }
-
-
-        return null;
+        HashSet<String> partsOfSpeech = new HashSet<>();
+        HashSet<String> resultPartsOfSpeech = new HashSet<>();
+        List <String> wordsList = Arrays.asList(Arrays.stream(userRequest.split(" ")).map(string ->
+                string.toLowerCase().replaceAll("\\pP", "")).toArray(String[]::new));
+        wordsList.forEach(word -> {
+            try {
+                lemmatizator.getLemms(word.trim().toLowerCase().replaceAll("\\pP", ""));
+                System.out.println("*******************************************************************");
+                partsOfSpeech.addAll(lemmatizator.partOfLang(word.trim().toLowerCase().replaceAll("\\pP", "")));
+                System.out.println(partsOfSpeech);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        partsOfSpeech.forEach(word -> {
+            if (word.contains("ПРЕДЛ") || word.contains("ЧАСТ") || word.contains("СОЮЗ")) {
+            } else {
+                resultPartsOfSpeech.add(word);
+            }
+        });
+        return resultPartsOfSpeech;
     }
 
 }
