@@ -14,13 +14,13 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.RecursiveAction;
 
 
-public class DataBaseUpdater extends RecursiveAction {
+public class DataBaseUpdaterEngine extends RecursiveAction {
     private String parentURL;
     private Elements childAbsoluteURLs = new Elements();
     private Elements childRelativeURLs = new Elements();
     private Elements allChildURLs = new Elements();
     private static ConcurrentSkipListSet<String> urls = new ConcurrentSkipListSet<>();
-    private List<DataBaseUpdater> taskList = new ArrayList<>();
+    private List<DataBaseUpdaterEngine> taskList = new ArrayList<>();
     private Document document;
     private List<String> tags = new ArrayList<>();
     private static List<Page>pages = new ArrayList<>();
@@ -30,7 +30,7 @@ public class DataBaseUpdater extends RecursiveAction {
     private static int pageCounter;
     private Index index;
 
-    public DataBaseUpdater(String url) throws IOException {
+    public DataBaseUpdaterEngine(String url) throws IOException {
         pageCounter ++;
         parentURL = url;
         document = Jsoup.connect(parentURL).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
@@ -107,7 +107,7 @@ public class DataBaseUpdater extends RecursiveAction {
                 }
                 urls.add(childURL.absUrl("href"));
                 try {
-                    DataBaseUpdater dataBaseUpdater = new DataBaseUpdater(childURL.absUrl("href"));
+                    DataBaseUpdaterEngine dataBaseUpdater = new DataBaseUpdaterEngine(childURL.absUrl("href"));
                     dataBaseUpdater.fork();
                     taskList.add(dataBaseUpdater);
                 } catch (HttpStatusException e) {
@@ -118,7 +118,7 @@ public class DataBaseUpdater extends RecursiveAction {
                     continue;
                 }
             }
-            for (DataBaseUpdater pageContentScanner : taskList) {
+            for (DataBaseUpdaterEngine pageContentScanner : taskList) {
                 pageContentScanner.join();
             }
         }

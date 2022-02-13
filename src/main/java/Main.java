@@ -1,6 +1,10 @@
+import Entity.Page;
+
 import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
 import java.net.ConnectException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool;
 
@@ -20,7 +24,13 @@ public class Main {
             //Поиск
             scanner = new Scanner(System.in);
             String query = scanner.nextLine();
-            Searching.search(query);
+            List<Page> searchingResult = SearchingEngine.search(query);
+            if (searchingResult.isEmpty()) {
+                System.out.println("No result");
+            } else {
+                searchingResult.forEach(page -> System.out.println(page.getPath()));
+            }
+
 
         } else if(command.equals("update database")) {
             //Обновление базы данных
@@ -29,7 +39,7 @@ public class Main {
                 String line = reader.readLine();
                 while (line != null) {
                     try {
-                        forkJoinPool.invoke(new DataBaseUpdater(line));
+                        forkJoinPool.invoke(new DataBaseUpdaterEngine(line));
                         line = reader.readLine();
                     }catch (SSLHandshakeException e) {
                         continue;

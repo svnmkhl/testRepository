@@ -9,6 +9,7 @@ public class Index {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private int id;
 
+
     @Column (name = "page_Id")
     private int pageID;
 
@@ -32,15 +33,31 @@ public class Index {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getPageID() {
         return pageID;
+    }
+
+    public void setPageID(int pageID) {
+        this.pageID = pageID;
     }
 
     public int getLemmaID() {
         return lemmaID;
     }
 
+    public void setLemmaID(int lemmaID) {
+        this.lemmaID = lemmaID;
+    }
+
     public float getRank() {
         return rank;
+    }
+
+    public void setRank(float rank) {
+        this.rank = rank;
     }
 }

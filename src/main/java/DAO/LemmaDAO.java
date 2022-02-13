@@ -34,7 +34,7 @@ public class LemmaDAO {
             session.close();
             return null;
         }
-        tx1.commit();
+        //tx1.commit();
         session.close();
         return lemmsList;
     }

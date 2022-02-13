@@ -1,6 +1,7 @@
 package Entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,10 +15,10 @@ public class Lemma {
 
     private int frequency;
 
-    @ManyToMany (cascade = CascadeType.ALL)
-    @JoinTable (name = "_index", joinColumns = {@JoinColumn (name = "lemma_id")}, inverseJoinColumns =
-            {@JoinColumn (name = "page_id")})
-    private List<Page> pages;
+    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable (name = "_index", joinColumns = {@JoinColumn (name = "lemma_id")},
+            inverseJoinColumns = {@JoinColumn (name = "page_id")})
+    private List<Page> pages = new ArrayList<>();
 
     public Lemma () {
 
@@ -30,6 +31,10 @@ public class Lemma {
 
     public List<Page> getPages() {
         return pages;
+    }
+
+    public void setPages(List<Page> pages){
+        this.pages = pages;
     }
 
     public int getId() {
@@ -53,5 +58,6 @@ public class Lemma {
     }
 
     public void setId(int id) {this.id = id;}
+
 
 }
