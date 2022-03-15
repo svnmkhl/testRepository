@@ -15,6 +15,24 @@ public class IndexDAO
         return HibernateSessionFactoryCreator.getSessionFactory().openSession().get(Index.class, id);
     }
 
+    public static synchronized List<Index> findByPageAndLemmaId(int pageId, int lemmaId) {
+        List<Index> indexList;
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
+        try {
+            Query query = session.createQuery("FROM Index WHERE page_Id = :pageId AND lemma_Id = :lemmaId");
+            query.setParameter("pageId", pageId);
+            query.setParameter("lemmaId", lemmaId);
+            indexList = query.getResultList();
+        } catch (Exception e) {
+            session.close();
+            return null;
+        }
+        session.close();
+        return indexList;
+    }
+
+
+
     public static synchronized void save(Index index) {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
@@ -39,5 +57,14 @@ public class IndexDAO
         session.delete(index);
         tx1.commit();
         session.close();
+    }
+
+    public static synchronized List<Index> findAllIndexes() {
+        Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        List<Index> indexList = (List<Index>)  session.createQuery("From User").list();
+        tx1.commit();
+        session.close();
+        return indexList;
     }
 }

@@ -25,12 +25,11 @@ public class LemmaDAO {
         Session session = HibernateSessionFactoryCreator.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         try {
-            //lemma = (Lemma) session.createSQLQuery("SELECT * FROM lemma WHERE lemma.lemma = \\'" + name + "\\'");
             Query query = session.createQuery("FROM Lemma WHERE lemma = :name");
             query.setParameter("name", name);
             lemmsList = query.getResultList();
         } catch (Exception e) {
-            tx1.commit();
+            //tx1.commit();
             session.close();
             return null;
         }

@@ -1,3 +1,5 @@
+package Comparators;
+
 import Entity.Lemma;
 
 import java.util.Comparator;

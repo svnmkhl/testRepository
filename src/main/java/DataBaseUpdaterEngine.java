@@ -15,10 +15,10 @@ import java.util.concurrent.RecursiveAction;
 
 
 public class DataBaseUpdaterEngine extends RecursiveAction {
-    private String parentURL;
-    private Elements childAbsoluteURLs = new Elements();
+    private String parentURI;
+    private Elements childAbsoluteURIs = new Elements();
     private Elements childRelativeURLs = new Elements();
-    private Elements allChildURLs = new Elements();
+    private Elements allChildURIs = new Elements();
     private static ConcurrentSkipListSet<String> urls = new ConcurrentSkipListSet<>();
     private List<DataBaseUpdaterEngine> taskList = new ArrayList<>();
     private Document document;
@@ -30,15 +30,15 @@ public class DataBaseUpdaterEngine extends RecursiveAction {
     private static int pageCounter;
     private Index index;
 
-    public DataBaseUpdaterEngine(String url) throws IOException {
+    public DataBaseUpdaterEngine(String URI) throws IOException {
         pageCounter ++;
-        parentURL = url;
-        document = Jsoup.connect(parentURL).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+        parentURI = URI;
+        document = Jsoup.connect(parentURI).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
                 .maxBodySize(0).referrer("http://www.google.com").get(); //Подключаемся к корневой странице и получаем тело данной страницы
     }
     @Override
     protected void compute() {
-        System.out.println("I am working in thread " + Thread.currentThread().getName() +  "\n Ссылка: "+ parentURL + "\n Страница №: " + pageCounter);
+        System.out.println("I am working in thread " + Thread.currentThread().getName() +  "\n Ссылка: "+ parentURI + "\n Страница №: " + pageCounter);
         HashMap<String, Integer> lemmsAndCounts;
         HashMap<Lemma, Float> lemmsAndRanks = new HashMap<>();
         Lemma lemma;
@@ -50,9 +50,9 @@ public class DataBaseUpdaterEngine extends RecursiveAction {
        /* List<String> tags = session.createSQLQuery("SELECT selector FROM _field").list();
         session.close();*/
         //HashMap<Integer, Integer> indexes = new HashMap<>();
-        content.append(document.select("title").text() + " ").append(document.select("body").text());
-        urls.add(parentURL);
-        page = new Page(parentURL, document.connection().response().statusCode(), content.toString());
+        //content.append(document.select("title") + " ").append(document.select("body"));
+        urls.add(parentURI);
+        page = new Page(parentURI, document.connection().response().statusCode(), document.toString());
         for (String tag : tags) {
             String contentByTag = document.select(tag).text();
             try {
@@ -91,17 +91,17 @@ public class DataBaseUpdaterEngine extends RecursiveAction {
             }
         }
         IndexDAO.saveMany(indexes);
-        childAbsoluteURLs = document.select("a[href*= " + parentURL + "]").select("a[href$=/]"); //Получаем дочерние абсолютные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
+        childAbsoluteURIs = document.select("a[href*= " + parentURI + "]").select("a[href$=/]"); //Получаем дочерние абсолютные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
         childRelativeURLs = document.select("a[href^=/]").select("a[href$=/]"); //Получаем дочерние относительные ссылки. Закрывается косой чертой, потому что ссылки могут быть на изображения и заканчиваться символами.
 
-        if (childAbsoluteURLs != null) {
-            allChildURLs.addAll(childAbsoluteURLs);
+        if (childAbsoluteURIs != null) {
+            allChildURIs.addAll(childAbsoluteURIs);
         }
         if (childRelativeURLs != null) {
-            allChildURLs.addAll(childRelativeURLs);
+            allChildURIs.addAll(childRelativeURLs);
         }
-        if (allChildURLs != null) {
-            for (Element childURL : allChildURLs) {
+        if (allChildURIs != null) {
+            for (Element childURL : allChildURIs) {
                 if (urls.contains(childURL.absUrl("href"))) {
                     continue;
                 }
@@ -111,7 +111,7 @@ public class DataBaseUpdaterEngine extends RecursiveAction {
                     dataBaseUpdater.fork();
                     taskList.add(dataBaseUpdater);
                 } catch (HttpStatusException e) {
-                    PageDAO.save(new Page(parentURL, e.getStatusCode(), ""));
+                    PageDAO.save(new Page(parentURI, e.getStatusCode(), ""));
                     e.printStackTrace();
                     continue;
                 } catch (IOException e) {
