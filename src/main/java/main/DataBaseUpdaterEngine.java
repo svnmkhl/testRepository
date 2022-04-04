@@ -1,8 +1,5 @@
-import Entity.Index;
-import Entity.Lemma;
-import Entity.Page;
-import Lemmatizator.Lemmatizator;
-import DAO.*;
+package main;
+
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

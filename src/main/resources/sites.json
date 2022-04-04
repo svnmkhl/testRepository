@@ -1,0 +1,40 @@
+{
+  "sites": [
+    {
+      "url": "http://www.playback.ru",
+      "name": "PlayBack.ru"
+    },
+    {
+      "url": "http://radiomv.ru",
+      "name": "Милицейская волна"
+    },
+    {
+      "url": "https://ipfran.ru",
+      "name": "Институт прикладной физики Российской академии наук"
+    },
+    {
+      "url": "https://dimonvideo.ru",
+      "name": "DimonVideo - Всё для мобильных устройств"
+    },
+    {
+      "url": "https://nikoartgallery.com",
+      "name": "Niko Art Gallery"
+    },
+    {
+      "url": "https://et-cetera.ru/mobile",
+      "name": "МОСКОВСКИЙ ТЕАТР «ET CETERA»"
+    },
+    {
+      "url": "https://www.lutherancathedral.ru",
+      "name": "КАФЕДРАЛЬНЫЙ СОБОР СВЯТЫХ ПЕТРА И ПАВЛА"
+    },
+    {
+      "url": "https://dombulgakova.ru",
+      "name": "МУЗЕЙ-ТЕАТР БУЛГАКОВСКИЙ ДОМ"
+    },
+    {
+      "url": "https://www.svetlovka.ru",
+      "name": "Центральная городская молодёжная библиотека имени М. А. Светлова"
+    }
+  ]
+}

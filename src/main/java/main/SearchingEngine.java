@@ -1,12 +1,5 @@
-import Comparators.LemmaFrequencyComparator;
-import Comparators.PageRelRelevanceComparator;
-import DAO.IndexDAO;
-import DAO.LemmaDAO;
-import Entity.Index;
-import Entity.Lemma;
-import Entity.Page;
-import Lemmatizator.Lemmatizator;
-import Pojo.PageWithRelevance;
+package main;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.Jsoup;
 import javax.xml.parsers.ParserConfigurationException;

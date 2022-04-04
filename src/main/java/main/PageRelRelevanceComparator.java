@@ -1,6 +1,4 @@
-package Comparators;
-
-import Pojo.PageWithRelevance;
+package main;
 
 import java.util.Comparator;
 

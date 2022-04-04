@@ -1,16 +1,22 @@
-import Pojo.PageWithRelevance;
+package main;
+
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import javax.net.ssl.SSLHandshakeException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.ConnectException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool;
 
-public class Main {
+public class Service {
 
+    @Value("${sites}")
+    private HashMap<String, String> sites;
 
-    public static void main(String[] args) throws IOException, InterruptedException, ParserConfigurationException {
+    public static void main(String[] args) throws IOException, InterruptedException, ParserConfigurationException, ParseException {
         final File inputFile = new File("src\\main\\resources\\sites.txt");
         FileReader fr = new FileReader(inputFile);
         BufferedReader reader = new BufferedReader(fr);

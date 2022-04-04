@@ -1,4 +1,4 @@
-package Lemmatizator;
+package main;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,6 +32,6 @@ public class LemmatizatorTest {
            }
        });
         resultPartsOfSpeech.forEach(word -> System.out.println(word));
-       //Lemmatizator.getLemmsAndCounts(wordsList);*/
+       //main.Lemmatizator.getLemmsAndCounts(wordsList);*/
     }
 }

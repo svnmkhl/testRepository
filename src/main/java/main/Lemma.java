@@ -1,4 +1,4 @@
-package Entity;
+package main;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 @Entity
 @Table (name = "lemma")
 public class Lemma {
+
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private int id;
